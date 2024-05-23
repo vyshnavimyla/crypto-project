@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Crypto Prices</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<style>
+    body{background-image:url("cc5.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    } 
+</style>
+<body>
+    <div class="container">
+        <h1>Live Crypto Prices</h1>
+        <!-- <span>enter amount</span> -->
+       <h3><span>Select Coin:</span></h3>
+        <select id="crypto-select">
+            <option value="bitcoin">Bitcoin</option>
+            <option value="ethereum">Ethereum</option>
+            <option value="binancecoin">Binance Coin</option>
+            <!-- <option value="solana">Solana</option> -->
+            <option value="cardano">Cardano</option>
+            <option value="ripple">Ripple</option>
+            <option value="dogecoin">Dogecoin</option>
+            <option value="polkadot">Polkadot</option>
+            <option value="uniswap">Uniswap</option>
+            <option value="chainlink">Chainlink</option>
+            <option value="litecoin">Litecoin</option>
+            <option value="matic-network">Polygon (MATIC)</option>
+            <option value="stellar">Stellar</option>
+            <option value="bitcoin-cash">Bitcoin Cash</option>
+            <option value="theta">Theta Network</option>
+            <option value="vechain">VeChain</option>
+            <option value="filecoin">Filecoin</option>
+            <option value="tron">Tron</option>
+            <option value="tezos">Tezos</option>
+            <option value="ethereum-classic">Ethereum Classic</option>
+        </select>
+        
+        <h3><span>Select Currency:</span></h3>
+        <select id="currency-select">
+            <option value="inr">INR</option>
+            <option value="usd">USD</option>
+            <option value="eubp">GBP</option>
+            <option value="jr">Euro</option>
+            <option value="gpy">JPY</option>
+            <option value="aud">AUD</option>
+            <option value="cad">CAD</option>
+            <option value="chf">CHF</option>
+            <option value="cny">CNY</option>
+            <option value="sek">SEK</option>
+            <option value="nzd">NZD</option>
+        </select>
+        
+        <h3><span>Enter Amount:</span></h3>
+       <input type="number" id="crypto-amount" placeholder="Enter amount">
+        
+        <h2><div id="price-display"></div></h2>
+
+<script>
+var cryptoSelect = document.getElementById("crypto-select");
+var priceDisplay = document.getElementById("price-display");
+var currencySelect = document.getElementById("currency-select");
+var amountInput = document.getElementById("crypto-amount");
+var amount = $('#crypto-amount').val();
+
+var currencySymbols = {
+    "usd": "$",
+    "eur": "€",
+    "gbp": "£",
+    "jpy": "¥",
+    "inr": "₹",
+    "aud": "A$",
+    "cad": "C$",
+    "chf": "CHF",
+    "cny": "¥",
+    "sek": "kr",
+    "nzd": "NZ$",
+    "krw": "₩",
+    "rub": "₽",
+    "brl": "R$",
+    "hkd": "HK$",
+    "sgd": "S$",
+    "zar": "R",
+    "try": "₺",
+    "mxn": "Mex$",
+    "idr": "Rp"
+};
+
+function updatePrice(coin,currency,amount) {
+    var liveprice = {
+        "async": true,
+        "crossDomain": true,
+        "url": "https://api.coingecko.com/api/v3/simple/price?ids=" + coin + "&vs_currencies="+currency,
+        "method": "GET",
+        "headers": {}
+}  
+$.ajax(liveprice).done(function(response) {
+        console.log(response, currency, "cryoto res");
+        var currencySymbol = currencySymbols[currency];
+        var priceWithSymbol = currencySymbol + (response[coin][currency] * amount).toFixed(2); // Multiply the price by the amount
+
+        // Prepend currency symbol to price
+        var priceWithSymbol = currencySymbol + priceWithSymbol; // Round to 2 decimal places
+        priceDisplay.innerHTML = "<p>Price of " + coin.charAt(0).toUpperCase() + coin.slice(1) + " for " + amount + " " + currency + ": " + priceWithSymbol + "</p>";
+    });
+}
+
+
+// Call updatePrice initially with the default selected cryptocurrency
+updatePrice(cryptoSelect.value,currencySelect.value,1);
+
+// Update price when the selected cryptocurrency changes
+cryptoSelect.addEventListener("change", function() {
+    updatePrice(cryptoSelect.value,currencySelect.value,amountInput.value);
+});
+currencySelect.addEventListener("change", function() {
+    updatePrice(cryptoSelect.value, currencySelect.value,amountInput.value);
+});
+amountInput.addEventListener("input", function() {
+    updatePrice(cryptoSelect.value, currencySelect.value, amountInput.value); // Update price when amount changes
+});
+</script>
+</body>
+
